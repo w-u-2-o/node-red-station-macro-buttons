@@ -1,0 +1,788 @@
+[
+    {
+        "id": "ec422e5bc677acf2",
+        "type": "tab",
+        "label": "Station Macro Buttons",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "1fcca434ae69cbe0",
+        "type": "function",
+        "z": "ec422e5bc677acf2",
+        "name": "Two Tone Toggle Button",
+        "func": "//toggle button with indication of state by color and label\n\n//receive button press output\n\nvar message = msg.payload\n\n//if the button action was to turn things off, then get them set to turn them on next press\n\nif (message.includes(\"zzut0\"))\n    \n        msg.background=\"green\",\n        msg.label=\"<font color=white>TWO-TONE\",\n        //set button so next press activates monitor and two-tone\n        flow.set(\"twoTone\", \"zzmo1;zzut1;\");\n\n//if the button action was to turn things on, then get them set to turn them off next press\n        \n            else\n            \n                msg.background=\"yellow\",\n                msg.label=\"<font color=black>TWO-TONE\",\n                //set button so next press deactivates monitor and two tone\n                flow.set(\"twoTone\", \"zzut0;zzmo0;\");\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 160,
+        "wires": [
+            [
+                "86cd13bcec445945"
+            ]
+        ]
+    },
+    {
+        "id": "86cd13bcec445945",
+        "type": "ui_button",
+        "z": "ec422e5bc677acf2",
+        "name": "Two Tone",
+        "group": "a39b19012f2b0630",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "{{msg.label}}",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "{{msg.background}}",
+        "className": "",
+        "icon": "",
+        "payload": "twoTone",
+        "payloadType": "flow",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 700,
+        "y": 160,
+        "wires": [
+            [
+                "1fcca434ae69cbe0",
+                "338758e3ee856d28"
+            ]
+        ]
+    },
+    {
+        "id": "0b218d67c4c61ae7",
+        "type": "inject",
+        "z": "ec422e5bc677acf2",
+        "name": "Initialize to OFF",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "zzut0",
+        "payloadType": "str",
+        "x": 200,
+        "y": 160,
+        "wires": [
+            [
+                "1fcca434ae69cbe0"
+            ]
+        ]
+    },
+    {
+        "id": "b6f0a1d208ed979c",
+        "type": "ui_button",
+        "z": "ec422e5bc677acf2",
+        "name": "Single Cal",
+        "group": "a39b19012f2b0630",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "<font color=white>SINGLE CAL",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "green",
+        "className": "",
+        "icon": "",
+        "payload": "zzus;",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 710,
+        "y": 240,
+        "wires": [
+            [
+                "338758e3ee856d28"
+            ]
+        ]
+    },
+    {
+        "id": "394ce45b28fbc09e",
+        "type": "link out",
+        "z": "ec422e5bc677acf2",
+        "name": "commandToThetis",
+        "mode": "link",
+        "links": [
+            "84085f72a32be681"
+        ],
+        "x": 1635,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "1285c21f23403c62",
+        "type": "comment",
+        "z": "ec422e5bc677acf2",
+        "name": "\"ZZ\" to commandToThetis",
+        "info": "",
+        "x": 1740,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "338758e3ee856d28",
+        "type": "split",
+        "z": "ec422e5bc677acf2",
+        "name": "Split messages on \";\"",
+        "splt": ";",
+        "spltType": "str",
+        "arraySplt": "1",
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 1170,
+        "y": 320,
+        "wires": [
+            [
+                "7dcc7055f8b55957"
+            ]
+        ]
+    },
+    {
+        "id": "7dcc7055f8b55957",
+        "type": "string",
+        "z": "ec422e5bc677acf2",
+        "name": "Add \";\" back on to messages",
+        "methods": [
+            {
+                "name": "append",
+                "params": [
+                    {
+                        "type": "str",
+                        "value": ";"
+                    }
+                ]
+            }
+        ],
+        "prop": "payload",
+        "propout": "payload",
+        "object": "msg",
+        "objectout": "msg",
+        "x": 1230,
+        "y": 380,
+        "wires": [
+            [
+                "a7201f7cd79edbe3"
+            ]
+        ]
+    },
+    {
+        "id": "a7201f7cd79edbe3",
+        "type": "switch",
+        "z": "ec422e5bc677acf2",
+        "name": "Route messages to proper destinations",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": ";",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "zz",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "ZZ",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "^",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "xx",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "XX",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 7,
+        "x": 1280,
+        "y": 460,
+        "wires": [
+            [],
+            [
+                "394ce45b28fbc09e"
+            ],
+            [
+                "394ce45b28fbc09e"
+            ],
+            [
+                "34346a1ab0653caa"
+            ],
+            [
+                "40175aefc981d39b"
+            ],
+            [
+                "40175aefc981d39b"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "9ab8e8d1b7d9767b",
+        "type": "function",
+        "z": "ec422e5bc677acf2",
+        "name": "Retune Toggle Button",
+        "func": "//toggle button with indication of state by color and label\n\n//receive button press output\n\nvar message = msg.payload\n\n//if the button action was to turn things off, then get them set to turn them on next press\n\nif (message.includes(\"^OS1;\"))\n    \n        msg.background=\"green\",\n        msg.label=\"<font color=white>RE-TUNE\",\n        //set button so next press puts amp in standby, activates monitor, sets tune power, asserts TUN\n        flow.set(\"reTune\", \"^OS0;zzmo1;zzto015;zztu1;\");\n\n//if the button action was to turn things on, then get them set to turn them off next press\n        \n            else\n            \n                msg.background=\"yellow\",\n                msg.label=\"<font color=black>RE-TUNE\",\n                //set button so next press inverts actions above and resets autodrive level\n                flow.set(\"reTune\", \"zztu0;zzmo0;zzto003;xxad1;^OS1;\");\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 440,
+        "wires": [
+            [
+                "b24f3796e1d6f3e5"
+            ]
+        ]
+    },
+    {
+        "id": "b24f3796e1d6f3e5",
+        "type": "ui_button",
+        "z": "ec422e5bc677acf2",
+        "name": "Re-tune",
+        "group": "a39b19012f2b0630",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "{{msg.label}}",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "{{msg.background}}",
+        "className": "",
+        "icon": "",
+        "payload": "reTune",
+        "payloadType": "flow",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 700,
+        "y": 440,
+        "wires": [
+            [
+                "9ab8e8d1b7d9767b",
+                "338758e3ee856d28"
+            ]
+        ]
+    },
+    {
+        "id": "a9e55c99fc419a17",
+        "type": "inject",
+        "z": "ec422e5bc677acf2",
+        "name": "Initialize to OFF",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "^OS1;",
+        "payloadType": "str",
+        "x": 200,
+        "y": 440,
+        "wires": [
+            [
+                "9ab8e8d1b7d9767b"
+            ]
+        ]
+    },
+    {
+        "id": "34346a1ab0653caa",
+        "type": "link out",
+        "z": "ec422e5bc677acf2",
+        "name": "commandToKPA1500",
+        "mode": "link",
+        "links": [
+            "d77872eab4ddd79e"
+        ],
+        "x": 1635,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "51b9533edafe98d8",
+        "type": "comment",
+        "z": "ec422e5bc677acf2",
+        "name": "\"^\" to commandToKPA1500",
+        "info": "",
+        "x": 1750,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "df562f5c1330533b",
+        "type": "ui_text",
+        "z": "ec422e5bc677acf2",
+        "group": "a39b19012f2b0630",
+        "order": 3,
+        "width": 4,
+        "height": 1,
+        "name": "Spacer",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 700,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "40175aefc981d39b",
+        "type": "link out",
+        "z": "ec422e5bc677acf2",
+        "name": "To PLC and Autodrive",
+        "mode": "link",
+        "links": [
+            "52bc2c778dee86a7",
+            "6f47b3fbd06b322a"
+        ],
+        "x": 1635,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "989e3ebb8b63ab86",
+        "type": "comment",
+        "z": "ec422e5bc677acf2",
+        "name": "\"XX\" to PLC and AutoDrive",
+        "info": "",
+        "x": 1740,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "b12fd0a6fa01ca56",
+        "type": "function",
+        "z": "ec422e5bc677acf2",
+        "name": "Full Tune Toggle Button",
+        "func": "\n// receive button press output\n\nvar message = msg.payload\n\n// if the button action was to end full tune, do that, set button accordingly to show status\n// and to start them on next press\n\nif (message == (\"initialize\")) {\n\n        msg.background=\"green\";\n        msg.label=\"<font color=white> FULL TUNE\";\n        flow.set(\"fullTune\", \"startFullTune\");\n        msg.payload = \"\";\n        node.send(msg);\n    \n}\n\n\nif (message == (\"endFullTune\")) {\n    \n        msg.background=\"green\";\n        msg.label=\"<font color=white> FULL TUNE\";\n        flow.set(\"fullTune\", \"startFullTune\");\n        msg.payload = \"zztu0;zzmo0;zzto003;xxad1;^OS1;\";\n        node.send(msg);\n}\n\n// if the button action was start full tune, do that, set button accordingly to show status\n// and to end things on next press\n        \nif (message == (\"startFullTune\")) {\n            \n        msg.background=\"yellow\";\n        msg.label=\"<font color=black>FULL TUNE\";\n        flow.set(\"fullTune\", \"endFullTune\");\n\n        //get amp in standby, monitor turned on, tune power set, tuner turned off\n        \n        msg.payload = \"^OS0;zzmo1;zzto015;xxat0;\"\n        node.send(msg);\n        \n        // two seconds after turning tuner power off turn tuner power back on\n        \n        setTimeout(function(){\n            msg.payload = \"xxat1;\";\n            node.send(msg);\n            }, 2000);\n        \n        // four seconds after turning tuner power off and two seconds after turning tuner back on\n        // assert TUN\n        \n         setTimeout(function(){\n            msg.payload = \"zztu1;\";\n            node.send(msg);\n            }, 4000);\n        \n}\n\nreturn;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 540,
+        "wires": [
+            [
+                "9c7f8f09f9cbf514",
+                "338758e3ee856d28"
+            ]
+        ]
+    },
+    {
+        "id": "9c7f8f09f9cbf514",
+        "type": "ui_button",
+        "z": "ec422e5bc677acf2",
+        "name": "Full Tune",
+        "group": "a39b19012f2b0630",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "{{msg.label}}",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "{{msg.background}}",
+        "className": "",
+        "icon": "",
+        "payload": "fullTune",
+        "payloadType": "flow",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 700,
+        "y": 540,
+        "wires": [
+            [
+                "b12fd0a6fa01ca56"
+            ]
+        ]
+    },
+    {
+        "id": "81cb85be33b4f614",
+        "type": "inject",
+        "z": "ec422e5bc677acf2",
+        "name": "Initialize to OFF",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "initialize",
+        "payloadType": "str",
+        "x": 200,
+        "y": 540,
+        "wires": [
+            [
+                "b12fd0a6fa01ca56"
+            ]
+        ]
+    },
+    {
+        "id": "9f05c44bb1621656",
+        "type": "ui_text",
+        "z": "ec422e5bc677acf2",
+        "group": "a39b19012f2b0630",
+        "order": 6,
+        "width": 4,
+        "height": 1,
+        "name": "Spacer",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 700,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "0295425aadfa8764",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 1,
+        "width": 3,
+        "height": 1
+    },
+    {
+        "id": "e29a76e86555537a",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 3,
+        "width": 3,
+        "height": 1
+    },
+    {
+        "id": "c6c681fd0cc4cf1f",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 5,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "0108441721dd24b3",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 6,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "64838794b612c6f2",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 8,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "75d211d7653ba42e",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 10,
+        "width": 8,
+        "height": 1
+    },
+    {
+        "id": "147b9a437bb87cd7",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 11,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "9b90d0665943bf88",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 12,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "abedc7271844354f",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 13,
+        "width": 5,
+        "height": 1
+    },
+    {
+        "id": "f1e9d4b122f3930a",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 15,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "c1183139642a7a8e",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 16,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "55d5fdd470182233",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 17,
+        "width": 5,
+        "height": 1
+    },
+    {
+        "id": "63f382b0ceae9501",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 19,
+        "width": 17,
+        "height": 1
+    },
+    {
+        "id": "9e7325860fe81bfc",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 20,
+        "width": 8,
+        "height": 1
+    },
+    {
+        "id": "0f25e95276c4a2c6",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 21,
+        "width": 17,
+        "height": 1
+    },
+    {
+        "id": "51c257d409ebb807",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 22,
+        "width": 8,
+        "height": 1
+    },
+    {
+        "id": "99d61b671e0faf18",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "e9028130cd721458",
+        "order": 1,
+        "width": 10,
+        "height": 1
+    },
+    {
+        "id": "a305d5978db67bdc",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "e9028130cd721458",
+        "order": 3,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "1ebb6baf6da0d7dc",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "e9028130cd721458",
+        "order": 4,
+        "width": 9,
+        "height": 1
+    },
+    {
+        "id": "6ca5672b6dab646a",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "e9028130cd721458",
+        "order": 6,
+        "width": 7,
+        "height": 1
+    },
+    {
+        "id": "e0c48dba3778b8eb",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "e9028130cd721458",
+        "order": 8,
+        "width": 9,
+        "height": 1
+    },
+    {
+        "id": "bdf025e8bd2f3a7c",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "e9028130cd721458",
+        "order": 9,
+        "width": 7,
+        "height": 1
+    },
+    {
+        "id": "bcb22fc862c56473",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "e9028130cd721458",
+        "order": 11,
+        "width": 9,
+        "height": 1
+    },
+    {
+        "id": "9602bddcd89f25c4",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "e9028130cd721458",
+        "order": 12,
+        "width": 10,
+        "height": 1
+    },
+    {
+        "id": "a39b19012f2b0630",
+        "type": "ui_group",
+        "name": "Macros",
+        "tab": "7cfa0acacdc9425e",
+        "order": 1,
+        "disp": false,
+        "width": "4",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "635398cba3a74363",
+        "type": "ui_group",
+        "name": "THETIS Settings",
+        "tab": "7db220f9384180a6",
+        "order": 1,
+        "disp": false,
+        "width": "30",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "e9028130cd721458",
+        "type": "ui_group",
+        "name": "KPA Settings",
+        "tab": "b049aa020586c3f1",
+        "order": 7,
+        "disp": false,
+        "width": "30",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "7cfa0acacdc9425e",
+        "type": "ui_tab",
+        "name": "STATION CONTROLLER MAIN",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "7db220f9384180a6",
+        "type": "ui_tab",
+        "name": "THETIS SETTINGS",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "b049aa020586c3f1",
+        "type": "ui_tab",
+        "name": "KPA SETTINGS",
+        "icon": "dashboard",
+        "order": 4,
+        "disabled": false,
+        "hidden": false
+    }
+]
