@@ -1,0 +1,995 @@
+[
+    {
+        "id": "ec422e5bc677acf2",
+        "type": "tab",
+        "label": "Station Macro Buttons Rev. 2",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "1fcca434ae69cbe0",
+        "type": "function",
+        "z": "ec422e5bc677acf2",
+        "name": "Two Tone Toggle Button",
+        "func": "//toggle button with indication of state by color and label\n\n//receive button press output\n\nvar message = msg.payload\n\n//if the button action was to turn things off, then get them set to turn them on next press\n\nif (message.includes(\"zzut0\"))\n    \n        msg.background=\"green\",\n        msg.label=\"<font color=white>TWO-TONE\",\n        //set button so next press activates monitor and two-tone\n        flow.set(\"twoTone\", \"zzmo1;zzut1;\");\n\n//if the button action was to turn things on, then get them set to turn them off next press\n        \n            else\n            \n                msg.background=\"yellow\",\n                msg.label=\"<font color=black>TWO-TONE\",\n                //set button so next press deactivates monitor and two tone\n                flow.set(\"twoTone\", \"zzut0;zzmo0;\");\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 160,
+        "wires": [
+            [
+                "86cd13bcec445945"
+            ]
+        ]
+    },
+    {
+        "id": "86cd13bcec445945",
+        "type": "ui_button",
+        "z": "ec422e5bc677acf2",
+        "name": "Two Tone",
+        "group": "a39b19012f2b0630",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "{{msg.label}}",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "{{msg.background}}",
+        "className": "",
+        "icon": "",
+        "payload": "twoTone",
+        "payloadType": "flow",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 700,
+        "y": 160,
+        "wires": [
+            [
+                "1fcca434ae69cbe0",
+                "338758e3ee856d28"
+            ]
+        ]
+    },
+    {
+        "id": "0b218d67c4c61ae7",
+        "type": "inject",
+        "z": "ec422e5bc677acf2",
+        "name": "Initialize to OFF",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "zzut0",
+        "payloadType": "str",
+        "x": 200,
+        "y": 160,
+        "wires": [
+            [
+                "1fcca434ae69cbe0"
+            ]
+        ]
+    },
+    {
+        "id": "b6f0a1d208ed979c",
+        "type": "ui_button",
+        "z": "ec422e5bc677acf2",
+        "name": "Single Cal",
+        "group": "a39b19012f2b0630",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "<font color=white>SINGLE CAL",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "green",
+        "className": "",
+        "icon": "",
+        "payload": "zzus;",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 710,
+        "y": 240,
+        "wires": [
+            [
+                "338758e3ee856d28"
+            ]
+        ]
+    },
+    {
+        "id": "394ce45b28fbc09e",
+        "type": "link out",
+        "z": "ec422e5bc677acf2",
+        "name": "commandToThetis",
+        "mode": "link",
+        "links": [
+            "84085f72a32be681"
+        ],
+        "x": 1625,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "1285c21f23403c62",
+        "type": "comment",
+        "z": "ec422e5bc677acf2",
+        "name": "\"ZZ\" to commandToThetis",
+        "info": "",
+        "x": 1730,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "338758e3ee856d28",
+        "type": "split",
+        "z": "ec422e5bc677acf2",
+        "name": "Split messages on \";\"",
+        "splt": ";",
+        "spltType": "str",
+        "arraySplt": "1",
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 1160,
+        "y": 220,
+        "wires": [
+            [
+                "7dcc7055f8b55957"
+            ]
+        ]
+    },
+    {
+        "id": "7dcc7055f8b55957",
+        "type": "string",
+        "z": "ec422e5bc677acf2",
+        "name": "Add \";\" back on to messages",
+        "methods": [
+            {
+                "name": "append",
+                "params": [
+                    {
+                        "type": "str",
+                        "value": ";"
+                    }
+                ]
+            }
+        ],
+        "prop": "payload",
+        "propout": "payload",
+        "object": "msg",
+        "objectout": "msg",
+        "x": 1220,
+        "y": 280,
+        "wires": [
+            [
+                "a7201f7cd79edbe3"
+            ]
+        ]
+    },
+    {
+        "id": "a7201f7cd79edbe3",
+        "type": "switch",
+        "z": "ec422e5bc677acf2",
+        "name": "Route messages to proper destinations",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": ";",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "zz",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "ZZ",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "^",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "xx",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "XX",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 7,
+        "x": 1270,
+        "y": 360,
+        "wires": [
+            [],
+            [
+                "394ce45b28fbc09e"
+            ],
+            [
+                "394ce45b28fbc09e"
+            ],
+            [
+                "34346a1ab0653caa"
+            ],
+            [
+                "40175aefc981d39b"
+            ],
+            [
+                "40175aefc981d39b"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "34346a1ab0653caa",
+        "type": "link out",
+        "z": "ec422e5bc677acf2",
+        "name": "commandToKPA1500",
+        "mode": "link",
+        "links": [
+            "d77872eab4ddd79e"
+        ],
+        "x": 1625,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "51b9533edafe98d8",
+        "type": "comment",
+        "z": "ec422e5bc677acf2",
+        "name": "\"^\" to commandToKPA1500",
+        "info": "",
+        "x": 1740,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "40175aefc981d39b",
+        "type": "link out",
+        "z": "ec422e5bc677acf2",
+        "name": "To PLC and Autodrive",
+        "mode": "link",
+        "links": [
+            "52bc2c778dee86a7",
+            "6f47b3fbd06b322a"
+        ],
+        "x": 1625,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "989e3ebb8b63ab86",
+        "type": "comment",
+        "z": "ec422e5bc677acf2",
+        "name": "\"XX\" to PLC and AutoDrive",
+        "info": "",
+        "x": 1730,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "b12fd0a6fa01ca56",
+        "type": "function",
+        "z": "ec422e5bc677acf2",
+        "name": "MFJ ATU Toggle Button",
+        "func": "\n// receive button press output\n\nvar message = msg.payload\n\nuseKPA = flow.get(\"useKPA\");\n\n//only activate button if band is 160 or 80 based on useKPA flow variable\n\nif (useKPA==false) {\n    \n        // if the button action was to end full tune, do that, set button accordingly to show status\n        // and to start them on next press\n        \n        if (message == (\"initialize\")) {\n        \n                msg.background=\"green\";\n                msg.label=\"<font color=white> MFJ TUNE\";\n                flow.set(\"fullTune\", \"startFullTune\");\n                msg.payload = \"\";\n                node.send(msg);\n            \n        }\n        \n        \n        if (message == (\"endFullTune\")) {\n            \n                msg.background=\"green\";\n                msg.label=\"<font color=white> MFJ TUNE\";\n                flow.set(\"fullTune\", \"startFullTune\");\n                msg.payload = \"zztu0;zzmo0;zzto010;xxad1;^OS1;\";\n                node.send(msg);\n        }\n        \n        // if the button action was start full tune, do that, set button accordingly to show status\n        // and to end things on next press\n                \n        if (message == (\"startFullTune\")) {\n                    \n                msg.background=\"yellow\";\n                msg.label=\"<font color=black>STOP TUNE\";\n                flow.set(\"fullTune\", \"endFullTune\");\n        \n                //get amp in standby, monitor turned on, tune power set, tuner turned off\n                \n                msg.payload = \"^OS0;zzmo1;zzto015;xxat0;\"\n                node.send(msg);\n                \n                // two seconds after turning tuner power off turn tuner power back on\n                \n                setTimeout(function(){\n                    msg.payload = \"xxat1;\";\n                    node.send(msg);\n                    }, 2000);\n                \n                // four seconds after turning tuner power off and two seconds after turning tuner back on\n                // assert TUN\n                \n                 setTimeout(function(){\n                    msg.payload = \"zztu1;\";\n                    node.send(msg);\n                    }, 4000);\n                \n        }\n}\n\n//if band is not 160 or 80 deactivate button\n\nelse {\n        msg.background=\"grey\",\n        msg.label=\"<font color=white>MFJ TUNE\",\n        flow.set(\"fullTune\", \"\");\n        msg.payload=\"\";\n        node.send(msg);\n}\n\nreturn;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 460,
+        "wires": [
+            [
+                "9c7f8f09f9cbf514",
+                "338758e3ee856d28"
+            ]
+        ]
+    },
+    {
+        "id": "9c7f8f09f9cbf514",
+        "type": "ui_button",
+        "z": "ec422e5bc677acf2",
+        "name": "MFJ Tune",
+        "group": "a39b19012f2b0630",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "{{msg.label}}",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "{{msg.background}}",
+        "className": "",
+        "icon": "",
+        "payload": "fullTune",
+        "payloadType": "flow",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 700,
+        "y": 460,
+        "wires": [
+            [
+                "b12fd0a6fa01ca56"
+            ]
+        ]
+    },
+    {
+        "id": "81cb85be33b4f614",
+        "type": "inject",
+        "z": "ec422e5bc677acf2",
+        "name": "Initialize to OFF",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "initialize",
+        "payloadType": "str",
+        "x": 200,
+        "y": 460,
+        "wires": [
+            [
+                "b12fd0a6fa01ca56"
+            ]
+        ]
+    },
+    {
+        "id": "8cd3c2510266c9ef",
+        "type": "function",
+        "z": "ec422e5bc677acf2",
+        "name": "KPA ATU Toggle Button",
+        "func": "//toggle button with indication of state by color and label\n\n//receive button press output or KPA1500 ATU tune-complete message\n\nvar message = msg.payload;\n\nmsg.payload = [null];\n\nuseKPA = flow.get(\"useKPA\");\n\n//only activate button if band is not 160 or 80 based on useKPA flow variable\n\nif (useKPA==true) {\n\n    //detect a toggle off button press by checking for \"OS1\" in the button press message, then set the button state up for a toggle on\n    \n    if (message.includes(\"OS1\")) {\n        \n        msg.background=\"green\",\n        msg.label=\"<font color=white>KPA TUNE\",\n        //set button so next press puts amp in standby, starts amp ATU, activates monitor, sets tune power, asserts TUN\n        flow.set(\"kpaTune\", \"^OS0;^FT;zzmo1;zzto015;zztu1;\");\n    }\n    \n    //detect a toggle on button press by checking for \"OS0\" in the button press message, then set the button state up for a toggle off\n    \n    if (message.includes(\"OS0\")) {\n     \n        msg.background=\"yellow\",\n        msg.label=\"<font color=black>STOP TUNE\",\n        //set button so next press inverts actions above and resets autodrive level\n        flow.set(\"kpaTune\", \"^FE;zztu0;zzmo0;zzto010;xxad1;^OS1;\");\n    }\n    \n    //detect a KPA1500 ATU tune-complete message by checking for that message, emulate a toggle off button press, then set the button state up for a toggle on\n    \n    if (message.includes(\"tuneComplete\")) {\n    \n        //send message as if there was a toggle off button press\n        msg.payload=\"^FE;zztu0;zzmo0;zzto010;xxad1;^OS1;\",\n        //set button state to toggle on\n        msg.background=\"green\",\n        msg.label=\"<font color=white>KPA TUNE\",\n        //set button so next press puts amp in standby, starts amp ATU, activates monitor, sets tune power, asserts TUN\n        flow.set(\"kpaTune\", \"^OS0;^FT;zzmo1;zzto015;zztu1;\");\n    }\n}\n\n//if band is 160 or 80 deactivate button\n\nelse {\n        msg.background=\"grey\",\n        msg.label=\"<font color=white>KPA TUNE\",\n        //set button so next press inverts actions above and resets autodrive level\n        flow.set(\"kpaTune\", \"\");\n}\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 620,
+        "wires": [
+            [
+                "338758e3ee856d28",
+                "53b67dfa794db82e"
+            ]
+        ]
+    },
+    {
+        "id": "53b67dfa794db82e",
+        "type": "ui_button",
+        "z": "ec422e5bc677acf2",
+        "name": "KPA Tune",
+        "group": "a39b19012f2b0630",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "{{msg.label}}",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "{{msg.background}}",
+        "className": "",
+        "icon": "",
+        "payload": "kpaTune",
+        "payloadType": "flow",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 700,
+        "y": 620,
+        "wires": [
+            [
+                "8cd3c2510266c9ef",
+                "338758e3ee856d28"
+            ]
+        ]
+    },
+    {
+        "id": "e7b81dbf11ed34f5",
+        "type": "inject",
+        "z": "ec422e5bc677acf2",
+        "name": "Initialize to OFF",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "^OS1;",
+        "payloadType": "str",
+        "x": 200,
+        "y": 620,
+        "wires": [
+            [
+                "8cd3c2510266c9ef"
+            ]
+        ]
+    },
+    {
+        "id": "0b0dc5fcd514121c",
+        "type": "link in",
+        "z": "ec422e5bc677acf2",
+        "name": "macroInput",
+        "links": [
+            "d5405b6cacff7960",
+            "17ae956ac0cc8ce1"
+        ],
+        "x": 115,
+        "y": 820,
+        "wires": [
+            [
+                "6462054efe3156cc"
+            ]
+        ]
+    },
+    {
+        "id": "ebc01ad57aed9d89",
+        "type": "change",
+        "z": "ec422e5bc677acf2",
+        "name": "Process KPA1500 ATU tune-complete messages",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "FT",
+                "fromt": "str",
+                "to": "tuneComplete",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 640,
+        "y": 820,
+        "wires": [
+            [
+                "8cd3c2510266c9ef"
+            ]
+        ]
+    },
+    {
+        "id": "6462054efe3156cc",
+        "type": "switch",
+        "z": "ec422e5bc677acf2",
+        "name": "Sort incoming messages",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "cont",
+                "v": "FT",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "BN",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 270,
+        "y": 820,
+        "wires": [
+            [
+                "ebc01ad57aed9d89"
+            ],
+            [
+                "615a2a4fa0278888"
+            ]
+        ]
+    },
+    {
+        "id": "615a2a4fa0278888",
+        "type": "function",
+        "z": "ec422e5bc677acf2",
+        "name": "Set flow.band so tuner macros are enabled appropriately by band",
+        "func": "band = msg.payload; //receive KPA1500 band message\nband = band.replace('^BN', ''); //strip KPA1500 band command prefix\nband = band.replace(';', ''); //strip KPA1500 band suffix\nbandNumber = parseInt(band); //make a number out of the string\nif (bandNumber != 1) useKPA = true; //160m is 0, 80M is 1, so anything other than 80M use KPA ATU\n    else useKPA = false;\nflow.set(\"useKPA\", useKPA);\nmsg.payload=\"^OS1;\" //create initialization message to button so it checks band condition\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 880,
+        "y": 860,
+        "wires": [
+            [
+                "8cd3c2510266c9ef",
+                "d8e4bb6ebdd2453f",
+                "a8d8fd2650e597ee"
+            ]
+        ]
+    },
+    {
+        "id": "d8e4bb6ebdd2453f",
+        "type": "change",
+        "z": "ec422e5bc677acf2",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "initialize",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1280,
+        "y": 860,
+        "wires": [
+            [
+                "b12fd0a6fa01ca56"
+            ]
+        ]
+    },
+    {
+        "id": "cef2c7b4ad6ff27f",
+        "type": "ui_text",
+        "z": "ec422e5bc677acf2",
+        "group": "a39b19012f2b0630",
+        "order": 6,
+        "width": 4,
+        "height": 1,
+        "name": "Spacer",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 700,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "a8d8fd2650e597ee",
+        "type": "function",
+        "z": "ec422e5bc677acf2",
+        "name": "Ensure that KPA1500 ATU is in BYPASS on 80 and 160M & MFJ power OFF otherwise",
+        "func": "useKPA=flow.get(\"useKPA\");\nif (useKPA==false)\n    msg.payload=\"^AMB;XXAT1;\"\n    else msg.payload=\"XXAT0;\"\nnode.send(msg);\nreturn;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1500,
+        "y": 900,
+        "wires": [
+            [
+                "338758e3ee856d28"
+            ]
+        ]
+    },
+    {
+        "id": "a7c26a2c4066fafe",
+        "type": "function",
+        "z": "ec422e5bc677acf2",
+        "name": "Dummy Load Toggle Button",
+        "func": "//toggle button with indication of state by color and label\n\n//receive button press output\n\nvar message = msg.payload\n\n//if the button action was to turn things off, then get them set to turn them on next press\n\nif (message.includes(\"xxdl1\"))\n    \n        msg.background=\"green\",\n        msg.label=\"<font color=white>DUMMY LOAD\",\n        //set button so next press activates monitor and two-tone\n        flow.set(\"dummyLoad\", \"xxdl0;^AMB;\");\n\n//if the button action was to turn things on, then get them set to turn them off next press\n        \n            else\n            \n                msg.background=\"yellow\",\n                msg.label=\"<font color=black>DUMMY LOAD\",\n                //set button so next press deactivates monitor and two tone\n                flow.set(\"dummyLoad\", \"xxdl1;^AMI;\");\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 460,
+        "y": 60,
+        "wires": [
+            [
+                "034802cdb3dfe9ed"
+            ]
+        ]
+    },
+    {
+        "id": "034802cdb3dfe9ed",
+        "type": "ui_button",
+        "z": "ec422e5bc677acf2",
+        "name": "Dummy Load",
+        "group": "a39b19012f2b0630",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "{{msg.label}}",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "{{msg.background}}",
+        "className": "",
+        "icon": "",
+        "payload": "dummyLoad",
+        "payloadType": "flow",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 710,
+        "y": 60,
+        "wires": [
+            [
+                "a7c26a2c4066fafe",
+                "338758e3ee856d28"
+            ]
+        ]
+    },
+    {
+        "id": "37cc4548328830b3",
+        "type": "inject",
+        "z": "ec422e5bc677acf2",
+        "name": "Initialize to OFF",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "xxdl1",
+        "payloadType": "str",
+        "x": 200,
+        "y": 60,
+        "wires": [
+            [
+                "a7c26a2c4066fafe"
+            ]
+        ]
+    },
+    {
+        "id": "0295425aadfa8764",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 1,
+        "width": 3,
+        "height": 1
+    },
+    {
+        "id": "e29a76e86555537a",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 3,
+        "width": 3,
+        "height": 1
+    },
+    {
+        "id": "c6c681fd0cc4cf1f",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 5,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "0108441721dd24b3",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 6,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "64838794b612c6f2",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 8,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "75d211d7653ba42e",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 10,
+        "width": 8,
+        "height": 1
+    },
+    {
+        "id": "147b9a437bb87cd7",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 11,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "9b90d0665943bf88",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 12,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "abedc7271844354f",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 13,
+        "width": 5,
+        "height": 1
+    },
+    {
+        "id": "f1e9d4b122f3930a",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 15,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "c1183139642a7a8e",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 16,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "55d5fdd470182233",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 17,
+        "width": 5,
+        "height": 1
+    },
+    {
+        "id": "63f382b0ceae9501",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 19,
+        "width": 17,
+        "height": 1
+    },
+    {
+        "id": "9e7325860fe81bfc",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 20,
+        "width": 8,
+        "height": 1
+    },
+    {
+        "id": "0f25e95276c4a2c6",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 21,
+        "width": 17,
+        "height": 1
+    },
+    {
+        "id": "51c257d409ebb807",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "635398cba3a74363",
+        "order": 22,
+        "width": 8,
+        "height": 1
+    },
+    {
+        "id": "99d61b671e0faf18",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "e9028130cd721458",
+        "order": 1,
+        "width": 10,
+        "height": 1
+    },
+    {
+        "id": "a305d5978db67bdc",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "e9028130cd721458",
+        "order": 3,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "1ebb6baf6da0d7dc",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "e9028130cd721458",
+        "order": 4,
+        "width": 9,
+        "height": 1
+    },
+    {
+        "id": "6ca5672b6dab646a",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "e9028130cd721458",
+        "order": 6,
+        "width": 7,
+        "height": 1
+    },
+    {
+        "id": "e0c48dba3778b8eb",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "e9028130cd721458",
+        "order": 8,
+        "width": 9,
+        "height": 1
+    },
+    {
+        "id": "bdf025e8bd2f3a7c",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "e9028130cd721458",
+        "order": 9,
+        "width": 7,
+        "height": 1
+    },
+    {
+        "id": "bcb22fc862c56473",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "e9028130cd721458",
+        "order": 11,
+        "width": 9,
+        "height": 1
+    },
+    {
+        "id": "9602bddcd89f25c4",
+        "type": "ui_spacer",
+        "z": "ec422e5bc677acf2",
+        "name": "spacer",
+        "group": "e9028130cd721458",
+        "order": 12,
+        "width": 10,
+        "height": 1
+    },
+    {
+        "id": "a39b19012f2b0630",
+        "type": "ui_group",
+        "name": "Macros",
+        "tab": "7cfa0acacdc9425e",
+        "order": 1,
+        "disp": false,
+        "width": "4",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "635398cba3a74363",
+        "type": "ui_group",
+        "name": "THETIS Settings",
+        "tab": "7db220f9384180a6",
+        "order": 1,
+        "disp": false,
+        "width": "30",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "e9028130cd721458",
+        "type": "ui_group",
+        "name": "KPA Settings",
+        "tab": "b049aa020586c3f1",
+        "order": 7,
+        "disp": false,
+        "width": "30",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "7cfa0acacdc9425e",
+        "type": "ui_tab",
+        "name": "STATION CONTROLLER MAIN",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "7db220f9384180a6",
+        "type": "ui_tab",
+        "name": "THETIS SETTINGS",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "b049aa020586c3f1",
+        "type": "ui_tab",
+        "name": "KPA SETTINGS",
+        "icon": "dashboard",
+        "order": 4,
+        "disabled": false,
+        "hidden": false
+    }
+]
